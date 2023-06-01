@@ -18,6 +18,11 @@ def login():
     with open(".env", "w") as f:
         f.write(f"USERNAME={username}\nEMAIL={email}\nPASSWORD={password}\n")
 
+    print()
+    print("Account info successfully updated")
+    print()
+    time.sleep(1.5)
+
 
 def setup():
     print()
