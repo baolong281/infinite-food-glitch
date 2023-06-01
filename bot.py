@@ -22,7 +22,7 @@ codes_path = "./codes.txt"
 
 paste = True
 if len(sys.argv) > 1:
-    if sys.argv[1] == 'false':
+    if sys.argv[1] == "false":
         paste = False
 
 USER_ID = 141341662  # chipotletweets account id
@@ -32,6 +32,7 @@ if not os.path.exists(codes_path):
         f.write("")
 
 codes = set(line.strip() for line in open("codes.txt"))
+
 
 def find_code(str):
     pattern = "[\d\w]+ to 888222"  # find pattern 'blahblahblah to 888222'
@@ -133,14 +134,14 @@ async def main():
         tweet_content = tweets[0].rawContent
         tweet_time = tweets[0].date
         tweet_time = tweet_time.strftime("%d/%m/%Y %H:%M")
-        current_time = datetime.now(timezone.utc).strftime('%d/%m/%Y %H:%M')
+        current_time = datetime.now(timezone.utc).strftime("%d/%m/%Y %H:%M")
         code = find_code(tweet_content)
 
         if code != "":
             handle_code(code)
         else:
             print(tweet_content)
-            print(f'Posted at: {tweet_time}. Current time: {current_time}')
+            print(f"Posted at: {tweet_time}. Current time: {current_time}")
 
         print()
         time.sleep(2)
@@ -151,9 +152,14 @@ def choose_option():
         "1) Run bot",
         "2) Reconfigure cursor",
         "3) Sign in / Change account info",
-        "4) Exit"
+        "4) Exit",
     ]
-    option, index = pick.pick(options, "Chipotle Bot / " + ("Pasting enabled" if paste else 'Pasting disabled'), indicator="=>", default_index=0)
+    option, index = pick.pick(
+        options,
+        "Chipotle Bot / " + ("Pasting enabled" if paste else "Pasting disabled"),
+        indicator="=>",
+        default_index=0,
+    )
 
     if index == 1:
         setup()
@@ -161,7 +167,7 @@ def choose_option():
     elif index == 2:
         login()
         choose_option()
-    elif index==3:
+    elif index == 3:
         sys.exit(0)
 
 
