@@ -1,10 +1,14 @@
+from setup import setup, login
+from pynput import mouse
+from twscrape import AccountsPool, API, gather
+from twscrape.logger import set_log_level
+from dotenv import dotenv_values
+import pick
 import pyautogui
 import pyperclip
 import json
 import asyncio
-from twscrape import AccountsPool, API, gather
-from twscrape.logger import set_log_level
-from dotenv import dotenv_values
+import os
 import time
 import re
 
@@ -13,14 +17,14 @@ env_vars = dotenv_values()
 with open("./config.json") as file:
     data = json.load(file)
 
-# USER_ID = 141341662 #chipotletweets account id
-USER_ID = 1663919694011670530  # blahburner123
+X = data["position"][0]
+Y = data["position"][1]
+
+USER_ID = 141341662 #chipotletweets account id
 USERNAME = env_vars["USERNAME"]
 EMAIL = env_vars["EMAIL"]
 PASSWORD = env_vars["PASSWORD"]
 
-X = data["position"][0]
-Y = data["position"][1]
 
 codes = set(line.strip() for line in open("codes.txt"))
 
@@ -37,6 +41,7 @@ def find_code(str):
 
 def paste_code(str):
     pyautogui.moveTo(X, Y)
+    pyautogui.click()
     pyautogui.click()
     pyperclip.copy(str)
     pyautogui.keyDown("command")
@@ -72,6 +77,13 @@ def handle_code(code):
 
 async def main():
     pool = AccountsPool()
+    
+    acc_path = './.env'
+
+    if not os.path.exists(acc_path):
+        print("AGJEIGJAEIGJ")
+        login()
+
     await pool.add_account(USERNAME, PASSWORD, EMAIL, PASSWORD)
     await pool.login_all()
     api = API(pool)
@@ -83,7 +95,7 @@ async def main():
         if check_tweets(tweets) == False:
             continue
 
-        tweet_content = tweets[1].rawContent
+        tweet_content = tweets[0].rawContent
         code = find_code(tweet_content)
 
         if code != "":
@@ -97,4 +109,12 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+
+    options = ["option 1", 'option 2'] 
+
+    option, index = pick.pick(options, "Title", indicator='=>', default_index=1)
+
+    print(option)
+
+    #setup()
+    #asyncio.run(main())
