@@ -25,8 +25,7 @@ if len(sys.argv) > 1:
     if sys.argv[1] == 'false':
         paste = False
 
-#USER_ID = 141341662  # chipotletweets account id
-USER_ID = 1663919694011670530
+USER_ID = 141341662  # chipotletweets account id
 
 if not os.path.exists(codes_path):
     with open(codes_path, "w") as f:
