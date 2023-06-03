@@ -35,13 +35,14 @@ codes = set(line.strip() for line in open("codes.txt"))
 
 
 def find_code(str):
-    pattern = "[\d\w]+ to 888222"  # find pattern 'blahblahblah to 888222'
+    pattern = "[\d\w&%$@!#]+ to 888222"  # find pattern 'blahblahblah to 888222'
     matches = re.findall(pattern, str)
     if len(matches) == 0:
-        return ""
+        return ('', '')
 
     code = matches[0].split()[0]
-    return code
+    second = code.split('FREETHREES')[1]
+    return code, second
 
 
 def paste_code(str):
@@ -58,14 +59,14 @@ def paste_code(str):
 
 
 def check_tweets(tweets):
-    if len(tweets) < 2:
+    if len(tweets) < 1:
         print("no tweets found")
         time.sleep(2)
         return False
     return True
 
 
-def handle_code(code):
+def handle_code(code, second):
     if code in codes:
         print(f"Code already used: {code}")
         return
@@ -74,7 +75,7 @@ def handle_code(code):
 
     print("###########################################")
     for _ in range(8):
-        print(f"CODE FOUND!!!!: {code}")
+        print(f"CODE FOUND: {code}  or  {second}")
     print("###########################################")
     codes.add(code)
 
@@ -133,12 +134,12 @@ async def main():
 
         tweet_content = tweets[0].rawContent
         tweet_time = tweets[0].date
-        tweet_time = tweet_time.strftime("%d/%m/%Y %H:%M")
-        current_time = datetime.now(timezone.utc).strftime("%d/%m/%Y %H:%M")
-        code = find_code(tweet_content)
+        tweet_time = tweet_time.strftime("%m/%d/%Y %H:%M")
+        current_time = datetime.now(timezone.utc).strftime("%m/%d/%Y %H:%M")
+        code, second = find_code(tweet_content)
 
         if code != "":
-            handle_code(code)
+            handle_code(code, second)
         else:
             print(tweet_content)
             print(f"Posted at: {tweet_time}. Current time: {current_time}")
