@@ -41,7 +41,11 @@ def find_code(str):
         return ('', '')
 
     code = matches[0].split()[0]
-    second = code.split('FREETHREES')[1]
+
+    second = ''
+    if len(code.split('FREETHREES')) > 1:
+        second = code.split('FREETHREES')[1]
+
     return code, second
 
 
