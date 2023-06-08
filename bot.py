@@ -36,14 +36,16 @@ codes = set(line.strip() for line in open("codes.txt"))
 
 
 def find_code(str):
-    pattern = "[\d\w&\-%$@!#]+\s*to\s*888222"
+    #pattern = "[\d\w&\-%$@!#]+\s*to\s*888222"
+    pattern = 'FREETHREES[A-Z&\-%$@!#\d]+'
     matches = re.findall(pattern, str)
 
     if len(matches) == 0:
         return ("", "")
 
-    code = matches[0].split()[0]
+    code = matches[0]
 
+    second = ''
     if len(code.split("FREETHREES")) > 1:
         second = code.split("FREETHREES")[1]
 
@@ -160,7 +162,6 @@ async def main():
             print(tweet_content)
             print(f"Posted at: {tweet_time}. Current time: {current_time}")
 
-        print()
         time.sleep(2)
 
 
