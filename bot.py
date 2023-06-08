@@ -39,13 +39,13 @@ def find_code(str):
     pattern = "[\d\w&%$@!#]+ to 888222"  # find pattern 'blahblahblah to 888222'
     matches = re.findall(pattern, str)
     if len(matches) == 0:
-        return ('', '')
+        return ("", "")
 
     code = matches[0].split()[0]
 
-    second = ''
-    if len(code.split('FREETHREES')) > 1:
-        second = code.split('FREETHREES')[1]
+    second = ""
+    if len(code.split("FREETHREES")) > 1:
+        second = code.split("FREETHREES")[1]
 
     return code, second
 
@@ -106,8 +106,9 @@ def load_acc():
 
     return USERNAME, EMAIL, PASSWORD
 
+
 def contains_img(content):
-    pattern = 'https://t.co/'
+    pattern = "https://t.co/"
     links = re.findall(pattern, content)
     return len(links) > 0
 
@@ -150,7 +151,7 @@ async def main():
 
         if contains_img(tweet_content):
             tweet_content = read_img()
-        
+
         code, second = find_code(tweet_content)
 
         if code != "":
