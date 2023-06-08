@@ -1,21 +1,14 @@
 from setup import setup, login
-from pynput import mouse
 from twscrape import AccountsPool, API, gather
-from twscrape.logger import set_log_level
 from dotenv import dotenv_values
-from datetime import datetime, timezone
 from img import read_img
+from utils import find_code, paste_code, check_tweets, contains_img, get_time, print_green
 import sys
-import subprocess
 import pick
-import pyautogui
-import pyperclip
 import json
 import asyncio
 import os
 import time
-import re
-
 
 acc_path = "./.env"
 config_path = "./config.json"
@@ -35,50 +28,12 @@ if not os.path.exists(codes_path):
 codes = set(line.strip() for line in open("codes.txt"))
 
 
-def find_code(str):
-    #pattern = "[\d\w&\-%$@!#]+\s*to\s*888222"
-    pattern = 'FREETHREES[A-Z&\-%$@!#\d]+'
-    matches = re.findall(pattern, str)
-
-    if len(matches) == 0:
-        return ("", "")
-
-    code = matches[0]
-
-    second = ''
-    if len(code.split("FREETHREES")) > 1:
-        second = code.split("FREETHREES")[1]
-
-    return code, second
-
-
-def paste_code(str):
-    pyperclip.copy(str)
-    if paste:
-        X, Y = load_config()
-        pyautogui.moveTo(X, Y)
-        pyautogui.click()
-        pyautogui.click()
-        pyautogui.keyDown("command")
-        pyautogui.press("v")
-        pyautogui.keyUp("command")
-        pyautogui.press("enter")
-
-
-def check_tweets(tweets):
-    if len(tweets) < 1:
-        print("no tweets found")
-        time.sleep(2)
-        return False
-    return True
-
-
-def handle_code(code, second):
+def handle_code(code, second, paste):
     if code in codes:
         print(f"Code already used: {code}")
         return
 
-    paste_code(code)
+    paste_code(code, paste, load_config())
 
     print("###########################################")
     for _ in range(8):
@@ -109,15 +64,34 @@ def load_acc():
     return USERNAME, EMAIL, PASSWORD
 
 
-def contains_img(content):
-    pattern = "https://t.co/"
-    links = re.findall(pattern, content)
-    return len(links) > 0
+def choose_option():
+    options = [
+        "1) Run bot",
+        "2) Reconfigure cursor",
+        "3) Sign in / Change account info",
+        "4) Exit",
+    ]
+    option, index = pick.pick(
+        options,
+        "Chipotle Bot / " + ("Pasting enabled" if paste else "Pasting disabled"),
+        indicator="=>",
+        default_index=0,
+    )
+
+    if index == 1:
+        setup()
+        choose_option()
+    elif index == 2:
+        login()
+        choose_option()
+    elif index == 3:
+        sys.exit(0)
+
 
 
 async def main():
     print()
-    print("Bot starting...")
+    print_green("Bot starting...")
     print()
 
     if not os.path.exists(acc_path):
@@ -142,14 +116,12 @@ async def main():
     while True:
         tweets = await gather(api.user_tweets(USER_ID, limit=1))
 
-        if check_tweets(tweets) == False:
+        if check_tweets(tweets) is False:
             continue
 
         tweet = tweets[0]
         tweet_content = tweet.rawContent
-        tweet_time = tweet.date
-        tweet_time = tweet_time.strftime("%m/%d/%Y %H:%M")
-        current_time = datetime.now(timezone.utc).strftime("%m/%d/%Y %H:%M")
+        tweet_time, current_time = get_time(tweet)
 
         if contains_img(tweet_content):
             tweet_content = read_img()
@@ -157,36 +129,12 @@ async def main():
         code, second = find_code(tweet_content)
 
         if code != "":
-            handle_code(code, second)
+            handle_code(code, second, paste)
         else:
             print(tweet_content)
-            print(f"Posted at: {tweet_time}. Current time: {current_time}")
+            print_green(f"Posted at: {tweet_time}. Current time: {current_time}")
 
         time.sleep(2)
-
-
-def choose_option():
-    options = [
-        "1) Run bot",
-        "2) Reconfigure cursor",
-        "3) Sign in / Change account info",
-        "4) Exit",
-    ]
-    option, index = pick.pick(
-        options,
-        "Chipotle Bot / " + ("Pasting enabled" if paste else "Pasting disabled"),
-        indicator="=>",
-        default_index=0,
-    )
-
-    if index == 1:
-        setup()
-        choose_option()
-    elif index == 2:
-        login()
-        choose_option()
-    elif index == 3:
-        sys.exit(0)
 
 
 if __name__ == "__main__":

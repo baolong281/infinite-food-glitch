@@ -1,5 +1,6 @@
 import pytesseract
 import requests
+from utils import print_green
 from PIL import Image
 from io import BytesIO
 from tweety.bot import Twitter
@@ -17,4 +18,5 @@ def read_img():
     except:
         return "err"
 
+    print_green("\nImage reads:\n")
     return pytesseract.image_to_string(image)
