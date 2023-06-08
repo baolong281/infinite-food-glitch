@@ -4,16 +4,18 @@ import time
 import pyperclip
 import pyautogui
 
+
 def print_green(str):
     GREEN = "\033[32m"
     RESET = "\033[0m"
     print(GREEN + str + RESET)
 
+
 def get_time(tweet):
-	tweet_time = tweet.date
-	tweet_time = tweet_time.strftime("%m/%d/%Y %H:%M")
-	current_time = datetime.now(timezone.utc).strftime("%m/%d/%Y %H:%M")
-	return tweet_time, current_time
+    tweet_time = tweet.date
+    tweet_time = tweet_time.strftime("%m/%d/%Y %H:%M")
+    current_time = datetime.now(timezone.utc).strftime("%m/%d/%Y %H:%M")
+    return tweet_time, current_time
 
 
 def contains_img(content):
