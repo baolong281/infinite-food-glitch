@@ -4,6 +4,7 @@ from twscrape import AccountsPool, API, gather
 from twscrape.logger import set_log_level
 from dotenv import dotenv_values
 from datetime import datetime, timezone
+from img import read_img
 import sys
 import subprocess
 import pick
@@ -105,6 +106,11 @@ def load_acc():
 
     return USERNAME, EMAIL, PASSWORD
 
+def contains_img(content):
+    pattern = 'https://t.co/'
+    links = re.findall(pattern, content)
+    return len(links) > 0
+
 
 async def main():
     print()
@@ -136,10 +142,15 @@ async def main():
         if check_tweets(tweets) == False:
             continue
 
-        tweet_content = tweets[0].rawContent
-        tweet_time = tweets[0].date
+        tweet = tweets[0]
+        tweet_content = tweet.rawContent
+        tweet_time = tweet.date
         tweet_time = tweet_time.strftime("%m/%d/%Y %H:%M")
         current_time = datetime.now(timezone.utc).strftime("%m/%d/%Y %H:%M")
+
+        if contains_img(tweet_content):
+            tweet_content = read_img()
+        
         code, second = find_code(tweet_content)
 
         if code != "":
