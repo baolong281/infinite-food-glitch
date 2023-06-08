@@ -42,12 +42,7 @@ def find_code(str):
     if len(matches) == 0:
         return ("", "")
 
-    code = matches[0]
-
-    try:
-        code = code.split("to8222")[0]
-    except:
-        return ("", "")
+    code = matches[0].split()[0]
 
     if len(code.split("FREETHREES")) > 1:
         second = code.split("FREETHREES")[1]
