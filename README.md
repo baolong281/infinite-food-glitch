@@ -2,11 +2,20 @@
 
 bot that gets codes from [chipotle's free burrito promotion](https://chipotle.com/FreePointer) and (optionally) paste's them into imessage
 
+## features
+- automatic pasting into imessage
+- image recognition
 ## requirements
 
 - latest version of python
 - twitter account sign in
 - (optional) macos accessibility & imessage
+- tesseract-ocr
+
+## installing tesseract for macos
+```
+brew install tesseract
+```
 
 ### installing package requirements
 
