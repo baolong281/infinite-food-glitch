@@ -3,8 +3,10 @@
 bot that gets codes from [chipotle's free burrito promotion](https://chipotle.com/FreePointer) and (optionally) paste's them into imessage
 
 ## features
+
 - automatic pasting into imessage
 - image recognition
+
 ## requirements
 
 - latest version of python
@@ -13,6 +15,7 @@ bot that gets codes from [chipotle's free burrito promotion](https://chipotle.co
 - tesseract-ocr
 
 ## installing tesseract for macos
+
 ```
 brew install tesseract
 ```
@@ -32,19 +35,15 @@ git clone https://github.com/baolong281/infinite-food-glitch.git
 cd infinite-food-glitch
 ```
 
-### running with pasting into imessage
+### running with image scanning and no pasting
 
 ```
-python3 bot.py
+python3 bot.py --nopaste true --image true
 ```
 
-### without pasting
+by default the bot runs with pasting and without image scanning
 
-```
-python3 bot.py false
-```
-
-### after running
+## after running
 
 1. have messages open on the side with a conversation open to 888222
 2. when prompted to configure your cursor click on where the message box is (make sure not to move this window)
@@ -60,5 +59,6 @@ python3 bot.py false
 ctrl + c
 ```
 
-## reminder
+## 🚨 reminder 🚨
+
 bot may not always work as the code formatting is changed day by day

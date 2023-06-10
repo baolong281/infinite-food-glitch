@@ -6,10 +6,10 @@ from pynput import mouse
 
 def login():
     print()
-    print("#########################")
     print("Twitter sign in")
     print("#########################")
     print()
+
     username = input("Twitter username: ")
     email = input("Twitter email: ")
     password = input("Twitter password: ")

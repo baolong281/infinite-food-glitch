@@ -163,3 +163,4 @@ cython_debug/
 accounts.db
 config.json
 codes.txt
+.vscode
