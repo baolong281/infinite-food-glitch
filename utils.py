@@ -34,7 +34,7 @@ def get_time(tweet):
 
 def handle_img():
     app = Twitter()
-    tweets = app.get_tweets("blahburner123")
+    tweets = app.get_tweets("chipotletweets")
 
     try:
         tweet = tweets[0]

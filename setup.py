@@ -1,7 +1,7 @@
+from pynput import mouse
 import pyautogui
 import json
 import time
-from pynput import mouse
 
 
 def login():
