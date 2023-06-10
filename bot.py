@@ -1,8 +1,7 @@
 from setup import setup, login
 from twscrape import AccountsPool, API, gather
 from dotenv import dotenv_values
-from img import read_img
-from utils import find_code, paste_code, check_tweets, contains_img, get_time, print_green
+from utils import find_code, paste_code, check_tweets, get_time, print_green, handle_img
 import sys
 import pick
 import json
@@ -121,11 +120,8 @@ async def main():
 
         tweet = tweets[0]
         tweet_content = tweet.rawContent
-        tweet_time, current_time = get_time(tweet)
 
-        if contains_img():
-            print(tweet_content)
-            tweet_content = read_img()
+        tweet_content = handle_img(tweet_content)
 
         code, second = find_code(tweet_content)
 
@@ -133,9 +129,10 @@ async def main():
             handle_code(code, second, paste)
         else:
             print(tweet_content)
+            tweet_time, current_time = get_time(tweet)
             print_green(f"Posted at: {tweet_time}. Current time: {current_time}")
 
-        time.sleep(2)
+        time.sleep(1.85) # twitter allows 500ish requests every 15 minuts ~= 1 request every 1.8 seconds
 
 
 if __name__ == "__main__":

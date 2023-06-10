@@ -4,6 +4,10 @@ import time
 import pyperclip
 import pyautogui
 from tweety.bot import Twitter
+import pytesseract
+import requests
+from PIL import Image
+from io import BytesIO
 
 
 def print_green(str):
@@ -19,15 +23,23 @@ def get_time(tweet):
     return tweet_time, current_time
 
 
-def contains_img():
+def handle_img(tweet_content):
     app = Twitter()
     tweets = app.get_tweets("chipotletweets")
 
     try:
         tweet = tweets[0]
-        return len(tweets.media > 0)
-    except:
-        return False
+        if len(tweet.media) > 0:
+            img_url = tweet.media[0].media_url_https
+            response = requests.get(img_url)
+            image = Image.open(BytesIO(response.content))
+            print_green("\nImage reads:\n")
+            return pytesseract.image_to_string(image)
+    except Exception as e:
+        print(f"Error getting tweet media: {e}")
+        return tweet_content
+    
+    return tweet_content
 
 
 
