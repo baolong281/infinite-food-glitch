@@ -123,7 +123,8 @@ async def main():
         tweet_content = tweet.rawContent
         tweet_time, current_time = get_time(tweet)
 
-        if contains_img(tweet_content):
+        if contains_img():
+            print(tweet_content)
             tweet_content = read_img()
 
         code, second = find_code(tweet_content)

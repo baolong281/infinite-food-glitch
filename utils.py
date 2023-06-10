@@ -3,6 +3,7 @@ import re
 import time
 import pyperclip
 import pyautogui
+from tweety.bot import Twitter
 
 
 def print_green(str):
@@ -18,10 +19,16 @@ def get_time(tweet):
     return tweet_time, current_time
 
 
-def contains_img(content):
-    pattern = "https://t.co/"
-    links = re.findall(pattern, content)
-    return len(links) > 0
+def contains_img():
+    app = Twitter()
+    tweets = app.get_tweets("chipotletweets")
+
+    try:
+        tweet = tweets[0]
+        return len(tweets.media > 0)
+    except:
+        return False
+
 
 
 def check_tweets(tweets):
@@ -46,17 +53,15 @@ def paste_code(str, paste, coords):
 
 
 def find_code(str):
-    # pattern = "[\d\w&\-%$@!#]+\s*to\s*888222"
-    pattern = "FREETHREES[A-Z&\-%$@!#\d]+"
+    pattern = "[\d\w&%$@!#]+ to 888222"  # find pattern 'blahblahblah to 888222'
     matches = re.findall(pattern, str)
-
     if len(matches) == 0:
-        return ("", "")
+        return ('', '')
 
-    code = matches[0]
+    code = matches[0].split()[0]
 
-    second = ""
-    if len(code.split("FREETHREES")) > 1:
-        second = code.split("FREETHREES")[1]
+    second = ''
+    if len(code.split('FREETHREES')) > 1:
+        second = code.split('FREETHREES')[1]
 
     return code, second
