@@ -122,7 +122,6 @@ async def main():
         tweet = tweets[0]
         tweet_content = tweet.rawContent
         tweet_time, current_time = get_time(tweet)
-        tweet_content = "FREETHREESAJG#*_"
 
         if contains_img(tweet_content):
             tweet_content = read_img()
