@@ -59,3 +59,6 @@ python3 bot.py false
 ```
 ctrl + c
 ```
+
+## reminder
+bot may not always work as the code formatting is changed day by day
