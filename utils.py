@@ -19,10 +19,10 @@ logging.basicConfig(
 logging.getLogger("httpx").setLevel(logging.WARNING)
 
 
-def print_green(str):
+def turn_green(str):
     GREEN = "\033[32m"
     RESET = "\033[0m"
-    logging.info(GREEN + str + RESET)
+    return GREEN + str + RESET
 
 
 def get_time(tweet):
@@ -42,7 +42,6 @@ def handle_img():
             img_url = tweet.media[0].media_url_https
             response = requests.get(img_url)
             image = Image.open(BytesIO(response.content))
-            print_green("\nImage reads:\n")
             return pytesseract.image_to_string(image).replace("\n", " ")
         else:
             logging.info("Tweet has no media")

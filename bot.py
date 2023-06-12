@@ -1,7 +1,7 @@
 from setup import setup, login
 from twscrape import AccountsPool, API, gather
 from dotenv import dotenv_values
-from utils import find_code, paste_code, check_tweets, get_time, print_green, handle_img
+from utils import find_code, paste_code, check_tweets, get_time, turn_green, handle_img
 import argparse
 import logging
 import sys
@@ -28,8 +28,10 @@ signal.signal(signal.SIGINT, handle_exit)
 # ----------------------------------------
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--nopaste", type=bool, help="Paste code into messages")
-parser.add_argument("--image", type=bool, help="Scans for images or not")
+parser.add_argument(
+    "--nopaste", action="store_true", help="Disable pasting code into messages"
+)
+parser.add_argument("--image", action="store_true", help="Enable image scanning")
 args = parser.parse_args()
 
 paste = args.nopaste
@@ -94,7 +96,10 @@ def choose_option():
     ]
     option, index = pick.pick(
         options,
-        "Chipotle Bot / " + ("Pasting enabled" if paste else "Pasting disabled"),
+        "Chipotle Bot\n"
+        + ("Pasting disabled" if paste else "Pasting enabled")
+        + "\n"
+        + ("Image scanning enabled" if scan_image else "Image scanning disabled"),
         indicator="=>",
         default_index=0,
     )
@@ -110,7 +115,7 @@ def choose_option():
 
 
 async def main():
-    print_green("Bot starting...")
+    logging.info(turn_green("Bot starting..."))
 
     if not os.path.exists(acc_path):
         logging.warning("Account not yet signed in")
@@ -150,7 +155,9 @@ async def main():
             handle_code(code, second, paste)
         elif not scan_image:
             tweet_time, current_time = get_time(tweet)
-            print_green(f"Posted at: {tweet_time}. Current time: {current_time}")
+            logging.info(
+                turn_green(f"Posted at: {tweet_time}. Current time: {current_time}")
+            )
 
         time.sleep(
             1.85

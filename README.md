@@ -38,7 +38,7 @@ cd infinite-food-glitch
 ### running with image scanning and no pasting
 
 ```
-python3 bot.py --nopaste true --image true
+python3 bot.py --nopaste --image
 ```
 
 by default the bot runs with pasting and without image scanning
