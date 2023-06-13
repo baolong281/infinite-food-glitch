@@ -54,7 +54,7 @@ def handle_img():
 def check_tweets(tweets):
     if len(tweets) < 1:
         logging.info("No tweets found")
-        time.sleep(2)
+        time.sleep(.10)
         return False
     return True
 
