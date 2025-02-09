@@ -36,7 +36,7 @@ def check_tweets(tweets):
 
 def paste_code(str):
     webbrowser.open(f"sms:+888222&body={str}")
-    time.sleep(1)
+    time.sleep(1.5)
     pyautogui.press('enter')
 
 def find_code(str, pattern):
@@ -51,8 +51,4 @@ def find_code(str, pattern):
 
     code = matches[0].split()[0]
 
-    second = ""
-    if len(code.split("FREETHREES")) > 1:
-        second = code.split("FREETHREES")[1]
-
-    return code, second
+    return code
