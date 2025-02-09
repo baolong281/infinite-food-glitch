@@ -2,20 +2,17 @@ from pynput import mouse
 import pyautogui
 import json
 import time
+from tweety import Twitter
 
 
-def login():
+async def login():
     print()
     print("Twitter sign in")
     print("#########################")
     print()
 
-    username = input("Twitter username: ")
-    email = input("Twitter email: ")
-    password = input("Twitter password: ")
-
-    with open(".env", "w") as f:
-        f.write(f"USERNAME={username}\nEMAIL={email}\nPASSWORD={password}\n")
+    app = Twitter("session")
+    await app.start()
 
     print()
     print("Account info successfully updated")

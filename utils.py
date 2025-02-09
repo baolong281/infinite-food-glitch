@@ -1,15 +1,9 @@
 from datetime import datetime, timezone
-from tweety.bot import Twitter
-from io import BytesIO
-from PIL import Image
-import pytesseract
-import pyperclip
-import pyautogui
-import requests
+import re
 import logging
 import time
-import sys
-import re
+import webbrowser
+import pyautogui
 
 logging.basicConfig(
     level=logging.INFO,
@@ -32,25 +26,6 @@ def get_time(tweet):
     return tweet_time, current_time
 
 
-def handle_img():
-    app = Twitter()
-    tweets = app.get_tweets("chipotletweets")
-
-    try:
-        tweet = tweets[0]
-        if len(tweet.media) > 0:
-            img_url = tweet.media[0].media_url_https
-            response = requests.get(img_url)
-            image = Image.open(BytesIO(response.content))
-            return pytesseract.image_to_string(image).replace("\n", " ")
-        else:
-            logging.info("Tweet has no media")
-    except Exception as e:
-        logging.error(f"Error getting tweet media: {e}")
-
-    return ""
-
-
 def check_tweets(tweets):
     if len(tweets) < 1:
         logging.info("No tweets found")
@@ -59,21 +34,17 @@ def check_tweets(tweets):
     return True
 
 
-def paste_code(str, paste, coords):
-    pyperclip.copy(str)
-    if not paste:
-        X, Y = coords
-        pyautogui.moveTo(X, Y)
-        pyautogui.click()
-        pyautogui.click()
-        pyautogui.keyDown("command")
-        pyautogui.press("v")
-        pyautogui.keyUp("command")
-        pyautogui.press("enter")
+def paste_code(str):
+    webbrowser.open(f"sms:+888222&body={str}")
+    time.sleep(1)
+    pyautogui.press('enter')
 
+def find_code(str, pattern):
 
-def find_code(str):
-    pattern = "[\d\w&%$@!#]+ to 888222"  # find pattern 'blahblahblah to 888222'
+    # default pattern
+    if pattern == "":
+        pattern = "[\d\w&%$@!#]+ to 888222"
+
     matches = re.findall(pattern, str)
     if len(matches) == 0:
         return ("", "")

@@ -1,11 +1,4 @@
-pick==2.2.0
-Pillow==9.5.0
-Pillow==9.5.0
+pick==2.4.0
 PyAutoGUI==0.9.54
-pynput==1.7.6
-pyperclip==1.8.2
-pytesseract==0.3.10
-python-dotenv==1.0.0
-Requests==2.31.0
-tweety_ns==0.7.1
-twscrape==0.2.2
+pynput==1.7.7
+tweety_ns==2.1

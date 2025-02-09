@@ -1,13 +1,11 @@
-from setup import setup, login
-from twscrape import AccountsPool, API, gather
-from dotenv import dotenv_values
-from utils import find_code, paste_code, check_tweets, get_time, turn_green, handle_img
+from setup import login
+from tweety import TwitterAsync
+from utils import find_code, paste_code, check_tweets, get_time, turn_green
 import argparse
 import logging
 import sys
 import signal
 import pick
-import json
 import asyncio
 import os
 import time
@@ -16,7 +14,6 @@ logging.basicConfig(
     level=logging.INFO,
     format="\x1b[32m%(asctime)s\x1b[0m | \x1b[37m%(levelname)s\x1b[0m | \x1b[36m%(module)s:%(funcName)s:%(lineno)d\x1b[0m - %(message)s",
 )
-
 
 # ------------ handling exit ------------
 def handle_exit(sig, frame):
@@ -37,11 +34,10 @@ args = parser.parse_args()
 paste = args.nopaste
 scan_image = args.image
 
-USER_ID = 141341662  # chipotletweets account id
-
-acc_path = "./.env"
-config_path = "./config.json"
 codes_path = "./codes.txt"
+session_path = "./session.tw_session"
+
+REGEX_PATTERN = "[\d\w&%$@!#]+ to 888222"
 
 
 if not os.path.exists(codes_path):
@@ -50,17 +46,16 @@ if not os.path.exists(codes_path):
 
 codes = set(line.strip() for line in open("codes.txt"))
 
-
-def handle_code(code, second, paste):
+def handle_code(code):
     if code in codes:
         logging.info(f"Code already used: {code}")
         return
 
-    paste_code(code, paste, load_config())
+    paste_code(code)
 
     logging.info("###########################################")
     for _ in range(8):
-        logging.info(f"CODE FOUND: {code}  or  {second}")
+        logging.info(f"CODE FOUND: {code}")
     logging.info("###########################################")
     codes.add(code)
 
@@ -68,91 +63,66 @@ def handle_code(code, second, paste):
         f.write(code + "\n")
 
 
-def load_config():
-    with open(config_path) as file:
-        data = json.load(file)
-
-    X = data["position"][0]
-    Y = data["position"][1]
-
-    return X, Y
-
-
-def load_acc():
-    env_vars = dotenv_values()
-    USERNAME = env_vars["USERNAME"]
-    EMAIL = env_vars["EMAIL"]
-    PASSWORD = env_vars["PASSWORD"]
-
-    return USERNAME, EMAIL, PASSWORD
-
-
 def choose_option():
     options = [
         "1) Run bot",
-        "2) Reconfigure cursor",
-        "3) Sign in / Change account info",
-        "4) Exit",
+        "1) Change Regex",
+        "2) Exit",
     ]
     option, index = pick.pick(
         options,
-        "Chipotle Bot\n"
-        + ("Pasting disabled" if paste else "Pasting enabled")
-        + "\n"
-        + ("Image scanning enabled" if scan_image else "Image scanning disabled"),
+        "Chipotle Bot\n",
         indicator="=>",
         default_index=0,
     )
 
     if index == 1:
-        setup()
+        logging.info("Changing regex...")
+        global REGEX_PATTERN
+        pattern = input("Enter new regex pattern: ")
+        REGEX_PATTERN = pattern
         choose_option()
     elif index == 2:
-        login()
-        choose_option()
-    elif index == 3:
         sys.exit(0)
 
 
 async def main():
     logging.info(turn_green("Bot starting..."))
 
-    if not os.path.exists(acc_path):
+    if not os.path.exists(session_path):
         logging.warning("Account not yet signed in")
-        login()
+        await login()
 
-    if not os.path.exists(config_path) and paste:
-        logging.warning("Config not yet generated")
-        setup()
+    # if not scan_image:
+    app = TwitterAsync("session")
+    await app.connect()
+    chipotle = await app.get_user_info("chipotletweets")
 
-    if os.path.exists("./accounts.db"):
-        os.remove("./accounts.db")
-
-    if not scan_image:
-        pool = AccountsPool()
-        USERNAME, EMAIL, PASSWORD = load_acc()
-
-        await pool.add_account(USERNAME, PASSWORD, EMAIL, PASSWORD)
-        await pool.login_all()
-
-        api = API(pool)
+    last_tweet_id = None
 
     while True:
-        if not scan_image:
-            tweets = await gather(api.user_tweets(USER_ID, limit=1))
+        tweets = await app.get_tweets(chipotle, wait_time=5)
 
-            if check_tweets(tweets) is False:
-                continue
+        if check_tweets(tweets) is False:
+            continue
 
-            tweet = tweets[0]
-            tweet_content = tweet.rawContent
-        else:
-            tweet_content = handle_img()
-            logging.info(tweet_content)
 
-        code, second = find_code(tweet_content)
+        tweet = tweets[0]
+
+        if last_tweet_id is not None and last_tweet_id == tweet.id:
+            time.sleep(
+                5,
+            )  # twitter allows 500ish requests every 15 minuts ~= 1 request every 1.8 seconds
+            continue
+
+
+        tweet_content = tweet.text
+        last_tweet_id = tweet.id
+        logging.info(tweet_content)
+        code = find_code(tweet_content, REGEX_PATTERN)
+
         if code != "":
-            handle_code(code, second, paste)
+            handle_code(code)
         elif not scan_image:
             tweet_time, current_time = get_time(tweet)
             logging.info(
@@ -160,7 +130,7 @@ async def main():
             )
 
         time.sleep(
-            1.85
+            5,
         )  # twitter allows 500ish requests every 15 minuts ~= 1 request every 1.8 seconds
 
 
