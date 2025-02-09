@@ -111,12 +111,22 @@ async def main():
 
         if last_tweet_id is not None and last_tweet_id == tweet.id:
             time.sleep(
-                5,
+                10,
             )  # twitter allows 500ish requests every 15 minuts ~= 1 request every 1.8 seconds
             continue
 
 
-        tweet_content = tweet.text
+        try:
+            tweet_content = tweet.text
+        except Exception as err:
+            logging.error(f"Error: {err}")
+            logging.error(f"Tweet: {tweet}")
+            time.sleep(
+                10,
+            )  # twitter allows 500ish requests every 15 minuts ~= 1 request every 1.8 seconds
+            continue
+
+
         last_tweet_id = tweet.id
         logging.info(tweet_content)
         code = find_code(tweet_content, REGEX_PATTERN)
@@ -130,7 +140,7 @@ async def main():
             )
 
         time.sleep(
-            5,
+            10,
         )  # twitter allows 500ish requests every 15 minuts ~= 1 request every 1.8 seconds
 
 
