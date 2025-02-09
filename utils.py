@@ -35,7 +35,7 @@ def check_tweets(tweets):
 
 
 def paste_code(str):
-    webbrowser.open(f"sms:+888222&body={str}")
+    webbrowser.open(f"sms:888222&body={str}")
     time.sleep(1.5)
     pyautogui.press('enter')
 
